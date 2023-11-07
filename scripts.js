@@ -1,13 +1,20 @@
 function onEachFeature(feature, layer) {
     layer.on('click', function (e) {
-        var cobaciaValue = feature.properties.cobacia;
+        var cobaciaValue = feature.properties.cob_n;
 
         var cobaciaEdit = cobaciaValue;
+        /*
         while (cobaciaEdit.length > 0 && parseInt(cobaciaEdit.slice(-1)) % 2 !== 0) {
             cobaciaEdit = cobaciaEdit.slice(0, -1); // Remove o último dígito
         };
+        */
+
+        while (parseInt(cobaciaEdit.slice(-1)) % 2 !== 0 || cobaciaEdit.slice(-1) == 0) {
+            cobaciaEdit = cobaciaEdit.slice(0, -1); // Remove o último dígito
+        };
     
-        var popupContent = "CobaciaValue: " + cobaciaValue + "<br>CobaciaEdit: " + cobaciaEdit;
+        //var popupContent = "CobaciaValue: " + cobaciaValue + "<br>CobaciaEdit: " + cobaciaEdit;
+        var popupContent = "CobaciaValue: "+cobaciaValue+" TIPO: "+typeof cobaciaValue+"<br>CobaciaEdit: "+cobaciaEdit+" TIPO: "+typeof cobaciaEdit;
         
         L.popup()
             .setLatLng(e.latlng)
@@ -15,20 +22,22 @@ function onEachFeature(feature, layer) {
             .openOn(map);
         
         var ottobaciasMontante = L.Geoserver.wfs('http://191.252.221.146:8080/geoserver/wfs', {
-            layers: 'teste_shapefile:ottobacias_iguacu_5k',
+            layers: 'teste_shapefile:area_PB_50k_edit',
             fitLayer: false,
             className: 'camada_ottobacias_montante',
-            CQL_FILTER: "cobacia LIKE '"+cobaciaEdit+"%' AND cobacia > '"+cobaciaValue+"'"
+            CQL_FILTER: "cob_n LIKE '"+cobaciaEdit+"%' AND cob_n >= '"+cobaciaValue+"'",
         });
         ottobaciasMontante.addTo(map);
         
+        /*
         var ottobaciaSelecionada = L.Geoserver.wfs('http://191.252.221.146:8080/geoserver/wfs', {
-            layers: 'teste_shapefile:ottobacias_iguacu_5k',
+            layers: 'teste_shapefile:area_PB_50k',
             fitLayer: false,
             className: 'camada_ottobacias_selecionada',
             CQL_FILTER: "cobacia LIKE '"+cobaciaValue+"'"
         });
         ottobaciaSelecionada.addTo(map);
+        */
     });
 }
 
@@ -48,19 +57,21 @@ var baseOpenStreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
+/*
 var ottotrechos = L.Geoserver.wfs('http://191.252.221.146:8080/geoserver/wfs', {
-    layers: 'teste_shapefile:ottotrechos_iguacu_5k',
+    layers: 'teste_shapefile:trechos_PB_50k',
     //className: 'camada_ottobacias',
     attribution: 'ANA',
     //CQL_FILTER: "cobacia LIKE '86288%'",
     //onEachFeature: onEachFeature
 });
+*/
 
 var ottobacias = L.Geoserver.wfs('http://191.252.221.146:8080/geoserver/wfs', {
-    layers: 'teste_shapefile:ottobacias_iguacu_5k',
-    className: 'camada_ottobacias',
+    layers: 'teste_shapefile:area_PB_50k_edit',
+    //className: 'camada_ottobacias',
     attribution: 'ANA',
-    CQL_FILTER: "cobacia LIKE '8628%'",
+    //CQL_FILTER: "cobacia LIKE '8628%'",
     onEachFeature: onEachFeature
 });
 
@@ -77,8 +88,8 @@ var baseMaps = {
 };
 
 var overlayMaps = {
-    "Ottobacias": ottobacias,
-    "Ottotrechos": ottotrechos
+    "Ottobacias": ottobacias
+    //"Ottotrechos": ottotrechos
 };
 
 var layerControl = L.control.layers(baseMaps, overlayMaps);

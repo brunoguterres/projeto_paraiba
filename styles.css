@@ -1,0 +1,29 @@
+#map {
+    margin: 0;
+    height: 100vh;
+    }
+
+body {
+    margin: 0;
+ }
+
+.camada_ottobacias {
+    fill: #0b9bd4;
+    fill-opacity: 0.1;
+    stroke: #04cefd;
+    stroke-width: 0.5;
+}
+
+.camada_ottobacias_montante {
+    fill: rgb(255, 150, 0);
+    fill-opacity: 0.2;
+    stroke: rgb(255, 160, 0);
+    stroke-width: 0.7;
+}
+
+.camada_ottobacias_selecionada {
+    fill: rgb(0, 255, 0);
+    fill-opacity: 0.2;
+    stroke: rgb(0, 100, 0);
+    stroke-width: 0.7;
+}

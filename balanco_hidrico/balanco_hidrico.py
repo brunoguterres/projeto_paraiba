@@ -2,6 +2,24 @@ import numpy as np
 import psycopg2
 import time
 
+def calculo_balanco(matriz): #esta função realiza o cálculo do balanço
+    for i in range(len(matriz)):
+        if matriz[i][campo_cabeceira] == '1':
+            pass
+        else:
+            for j in range(i-1,-1,-1):
+                contador_montante = 0
+                if matriz[i][campo_cotrecho] == matriz[j][campo_trechojus] :
+                    matriz[i][campo_vazao_montante] += float(matriz[j][campo_vazao_jusante])
+                    contador_montante += 1
+                    if contador_montante == 2:
+                        break
+
+        matriz[i][campo_vazao_jusante] = float(matriz[i][campo_vazao_montante]) + float(matriz[i][campo_disponibilidade])
+               
+    return matriz.tolist()
+
+##### EXECUÇÃO #####
 # Parâmetros de conexão com o banco de dados
 nome_do_banco = 'teste_tabela'
 usuario = 'postgres'
@@ -16,40 +34,6 @@ conn = psycopg2.connect(
     host = host,
     port = porta
 )
-
-
-def calculo_balanco(matriz): #esta função realiza o cálculo do balanço
-    for i in range(len(matriz)):
-        #if i%10000==0:
-            #print(i)
-        mont = 0
-        montante = 0
-        if matriz[i][campo_cabeceira] == '1':
-            matriz[i][campo_vazao_montante] = montante
-        else:
-            ini = i-1
-            for j in range(ini,-1,-1):
-                
-                if matriz[i][campo_cotrecho] == matriz[j][campo_trechojus] :
-                    montante += float(matriz[j][campo_vazao_jusante])
-                    mont +=1
-                  
-                    if mont == 2:
-                        break
-
-        matriz[i][campo_vazao_jusante] = montante + float(matriz[i][campo_disponibilidade])
-        matriz[i][campo_vazao_montante] = montante
-       
-    return matriz.tolist()
-
-def criar_csv_resultado(matriz, nome_arquivo_resultado):
-    with open(nome_arquivo_resultado, 'w', newline='') as arquivo_resultado_csv:
-        escritor_resultado_csv = csv.writer(arquivo_resultado_csv)
-        for linha in matriz:
-            escritor_resultado_csv.writerow(linha)
-
-
-##### EXECUÇÃO #####
 
 campo_cotrecho = 0  # vai ser o cotrecho
 campo_cobacia = 1 # vai ser a cobacia

@@ -80,10 +80,6 @@
         <div id="caixa-legenda">
             <div id="titulo-legenda">Legenda:</div>
             <div class="item-legenda">
-                <img src="icones_legenda/sedes.png" alt="icone_sedes_municipais">
-                <span>Sedes Municipais</span>
-            </div>
-            <div class="item-legenda">
                 <img src="icones_legenda/rodovias.png" alt="icone_rodovias">
                 <span>Rodovias</span>
             </div>
@@ -168,8 +164,7 @@
                     bacias,
                     acudes,
                     drenagemPrincipal,
-                    rodovias,
-                    sedesMunicipais],
+                    rodovias],
         });
 
         var baseMaps = {
@@ -184,7 +179,6 @@
             "Açudes": acudes,
             "Drenagem Principal": drenagemPrincipal,
             "Rodovias": rodovias,
-            "Sedes Municipais": sedesMunicipais,
         };
 
         var layerControl = L.control.layers(baseMaps, overlayMaps);

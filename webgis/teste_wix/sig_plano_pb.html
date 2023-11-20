@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIG-Plano</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search/dist/leaflet-search.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+     <style>
+        #map-container {
+            position: relative;
+        }
+
+        #map {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #caixa-legenda {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: rgb(255, 255, 255);
+            padding: 10px;
+            border: 2px solid rgba(170, 170, 170, 0.8);
+            border-radius: 3px;
+        }
+
+        #titulo-legenda {
+            font-size: 15px;
+            font-family: Arial;
+            font-weight: 550;
+            color: rgb(0, 0, 0);
+            margin-bottom: 10px;
+        }
+
+        .item-legenda {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .item-legenda img {
+            width: 15px;
+            height: 15px;
+            padding-right: 5px;
+            padding-top: 2.5px;
+            padding-bottom: 2.5px;
+        }
+
+        .item-legenda span {
+            color: rgb(0, 0, 0);
+            font-size: 12px;
+            font-family: Arial;
+        }
+     </style>
+</head>
+
+<body>
+    <div id="map-container">
+        <div id="map"></div>
+        <div id="caixa-legenda">
+            <div id="titulo-legenda">Legenda:</div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_mineracao.png" alt="icone_sedes_municipais">
+                <span>Sedes Municipais</span>
+            </div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_XXX.png" alt="icone_rodovias">
+                <span>Rodovias</span>
+            </div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_XXX.png" alt="icone_drenagem_principal">
+                <span>Drenagem Principal</span>
+            </div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_XXX.png" alt="icone_acudes">
+                <span>Açudes</span>
+            </div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_XXX.png" alt="icone_bacias">
+                <span>Bacias</span>
+            </div>
+            <div class="item-legenda">
+                <img src="icones_legenda/icone_XXX.png" alt="icone_municipios">
+                <span>Municípios</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="L.Geoserver.js"></script>
+    <script src="https://unpkg.com/leaflet-search/dist/leaflet-search.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        var baseOpenStreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 22,
+            opacity: 1,
+            attribution: '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var baseGoogleSatelite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 22,
+            opacity: 1,
+            attribution: '<a href="https://www.google.com/maps">Google Satélite</a>'
+        });
+
+        var baseGoogleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxZoom: 22,
+            opacity: 1,
+            attribution: '<a href="https://www.google.com/maps">Google Streets</a>'
+        });
+
+        var sedesMunicipais = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:sedes_municipais_pb',
+            attribution: 'AESA',
+        });
+
+        var rodovias = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:rodovias_pb',
+            attribution: 'AESA',
+        });
+
+        var drenagemPrincipal = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:drenagem_principal_pb',
+            attribution: 'AESA',
+        });
+
+        var acudes= L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:acudes_pb',
+            attribution: 'AESA',
+        });
+
+        var bacias = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:bacias_pb',
+            attribution: 'AESA',
+        });
+
+        var municipios = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:municipios_pb',
+            attribution: 'IBGE',
+        });
+
+        var map = L.map('map', {
+            center: [-7.2, -37],
+            zoom: 8,
+            layers: [baseOpenStreetMap,
+                    municipios,
+                    bacias,
+                    acudes,
+                    drenagemPrincipal,
+                    rodovias,
+                    sedesMunicipais],
+        });
+
+        var baseMaps = {
+            "OpenStreetMap": baseOpenStreetMap,
+            "Google Satelite": baseGoogleSatelite,
+            "Google Streets": baseGoogleStreets,
+        };
+
+        var overlayMaps = {
+            "Municípios": municipios,
+            "Bacias": bacias,
+            "Açudes": acudes,
+            "Drenagem Principal": drenagemPrincipal,
+            "Rodovias": rodovias,
+            "Sedes Municipais": sedesMunicipais,
+        };
+
+        var layerControl = L.control.layers(baseMaps, overlayMaps);
+        layerControl.addTo(map);
+
+        var barraEscala = L.control.scale({
+            position: 'bottomright'
+        });
+        barraEscala.addTo(map);
+    </script>
+</body>
+
+</html>

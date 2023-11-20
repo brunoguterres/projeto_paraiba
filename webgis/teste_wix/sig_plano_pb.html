@@ -93,7 +93,7 @@
             </div>
             <div class="item-legenda">
                 <img src="icones_legenda/icone_bacia.png" alt="icone_bacias">
-                <span>Bacias</span>
+                <span>Bacia do Rio Paraíba</span>
             </div>
             <div class="item-legenda">
                 <img src="icones_legenda/icone_limites_municipais.PNG" alt="icone_municipios">
@@ -156,10 +156,16 @@
             attribution: 'IBGE',
         });
 
+        var estado = L.Geoserver.wms('http://191.252.221.146:8080/geoserver/wms', {
+            layers: 'paraiba:divisa_estadual_pb',
+            attribution: 'IBGE',
+        });
+
         var map = L.map('map', {
             center: [-7.2, -37],
             zoom: 8,
             layers: [baseOpenStreetMap,
+                    estado,
                     municipios,
                     bacias,
                     acudes,
@@ -174,6 +180,7 @@
         };
 
         var overlayMaps = {
+            "Estado": estado,
             "Municípios": municipios,
             "Bacias": bacias,
             "Açudes": acudes,

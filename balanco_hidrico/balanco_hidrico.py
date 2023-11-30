@@ -25,7 +25,6 @@ nome_do_banco = 'teste_tabela'
 usuario = 'postgres'
 senha = 'tonico'
 host = 'localhost'
-porta = '5432'
 
 conn = psycopg2.connect(
     dbname = nome_do_banco,

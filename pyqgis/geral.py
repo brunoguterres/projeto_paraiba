@@ -63,14 +63,8 @@ class Camadas:
         QgsProject.instance().addMapLayer(self.disponibilidade_hidrica, False)  # Camada adicionada, mas não visível.
         return self.disponibilidade_hidrica
     
-    def importar_outorgas(self, nome_bd, senha_bd, bacia_escolhida):
-        if bacia_escolhida == '1':
-            self.filtro_bacia_outorga = 'tietê'
-        elif bacia_escolhida == '2':
-            self.filtro_bacia_outorga = 'paranapanema'
-        elif bacia_escolhida == '3':
-            self.filtro_bacia_outorga = 'iguaçu'
-        # Importa outorgas estaduais
+    def importar_captacoes(self, nome_bd, senha_bd, bacia_escolhida):
+        
         self.uri = QgsDataSourceUri()
         self.uri.setConnection('localhost', '5432', nome_bd, 'postgres', senha_bd)
         self.uri.setDataSource('public', 'CNARH_Estadual_ANA_2022', 'geom')
@@ -160,11 +154,13 @@ class Processamentos:
         dados_tabela.append(linha_campos)
 
         # Itere sobre os recursos da camada
-        for feature in camada_ativa.getFeatures():
+        for feature in ottobacias.getFeatures():
             # Obtenha os valores dos atributos como uma lista
             valores_atributos = [feature[campo.name()] for campo in campos]
             
             dados_tabela.append(valores_atributos)
+        
+        print(dados_tabela)
 
 
 
